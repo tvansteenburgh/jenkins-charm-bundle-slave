@@ -21,6 +21,7 @@ trap cleanup EXIT
 # Create a new, temporary JUJU_HOME from the real one
 export REAL_JUJU_HOME=$HOME/cloud-city
 export TMP_JUJU_HOME=$(mktemp -d)
+export JUJU_HOME=$TMP_JUJU_HOME
 sudo cp -R $REAL_JUJU_HOME/* $TMP_JUJU_HOME
 rm -rf $TMP_JUJU_HOME/environments/*
 
