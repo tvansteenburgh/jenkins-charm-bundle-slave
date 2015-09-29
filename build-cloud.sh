@@ -61,7 +61,7 @@ sudo docker run --rm \
     -v ${JUJU_REPOSITORY}:/home/ubuntu/charm-repo \
     -v ${TMP}:${TMP} \
     -v ${TMP}/ssh:/home/ubuntu/.ssh \
-    -t jujusolutions/charmbox:latest \
+    -t tvansteenburgh/charmbox:latest \
     sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
 
 EXIT_STATUS=$?
