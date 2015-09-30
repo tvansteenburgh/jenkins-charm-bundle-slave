@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export ENV=$1
+export REAL_JUJU_HOME=$HOME/cloud-city
 
 bash <<"EOT"
 set -x
@@ -19,7 +20,6 @@ function cleanup {
 trap cleanup EXIT
 
 # Create a new, temporary JUJU_HOME from the real one
-export REAL_JUJU_HOME=$HOME/cloud-city
 export TMP_JUJU_HOME=$(mktemp -d)
 export JUJU_HOME=$TMP_JUJU_HOME
 cp -R $REAL_JUJU_HOME/* $TMP_JUJU_HOME
@@ -143,7 +143,7 @@ fi
 
 console_output=$(mktemp)
 curl -s --output $console_output ${BUILD_URL}consoleText
-s3cmd -c $JUJU_HOME/juju-qa.s3cfg put $console_output s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-consoleText
+s3cmd -c $REAL_JUJU_HOME/juju-qa.s3cfg put $console_output s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-consoleText
 rm -rf $console_output
 
 exit $EXIT_STATUS
