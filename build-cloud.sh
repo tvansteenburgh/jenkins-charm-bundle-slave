@@ -50,7 +50,7 @@ export START=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 mkdir -m 700 ${TMP}/ssh
 cp $TMP_JUJU_HOME/staging-juju-rsa ${TMP}/ssh/id_rsa
 
-CHARMBOX=tvansteenburgh/charmbox:latest
+CHARMBOX=jujusolutions/charmbox:latest
 sudo docker pull $CHARMBOX
 sudo docker run --rm \
     -u ubuntu \
