@@ -5,7 +5,7 @@ set -x
 export ENV=$1
 export REAL_JUJU_HOME=$HOME/cloud-city
 if [[ $ENV == "charm-testing-lxc" ]] ; then
-  export $LOCAL=true
+  export LOCAL=true
 fi
 
 bash <<"EOT"
