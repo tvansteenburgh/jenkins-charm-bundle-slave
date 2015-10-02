@@ -52,7 +52,7 @@ else
   juju bootstrap --show-log -e $ENV --constraints "mem=4G" || true
 fi
 
-juju set-constraints mem=2G
+juju set-constraints -e $ENV mem=2G
 
 export JUJU_VERSION=$(juju status -e $ENV | grep agent-version | head -n1 | tr -s " " | cut -d " " -f 3)
 export START=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
