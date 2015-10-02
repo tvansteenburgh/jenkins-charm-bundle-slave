@@ -1,9 +1,15 @@
 #!/bin/bash
 
+set -x
+
 export ENV=$1
 export REAL_JUJU_HOME=$HOME/cloud-city
+if [[ $ENV == "charm-testing-lxc" ]] ; then
+  export $LOCAL=true
+fi
 
 bash <<"EOT"
+
 set -x
 
 function cleanup {
@@ -38,10 +44,14 @@ if [ -n "$BUNDLE_ARGS" ]; then
 fi
 
 juju destroy-environment --yes --force $ENV || true
-$HOME/juju-ci-tools/clean_resources.py -v $ENV || true
-# 4G mem for bootstrap node...
-juju bootstrap --show-log -e $ENV --constraints "mem=4G" || true
-# 2G mem for everything else
+
+if [[ $LOCAL ]] ; then
+  juju bootstrap --show-log -e $ENV --constraints "mem=2G" || true
+else
+  $HOME/juju-ci-tools/clean_resources.py -v $ENV || true
+  juju bootstrap --show-log -e $ENV --constraints "mem=4G" || true
+fi
+
 juju set-constraints mem=2G
 
 export JUJU_VERSION=$(juju status -e $ENV | grep agent-version | head -n1 | tr -s " " | cut -d " " -f 3)
@@ -107,11 +117,21 @@ bundlefile=${artifacts[1]}
 # upload results.json
 s3cmd -c $TMP_JUJU_HOME/juju-qa.s3cfg put $OUTPUT s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-results.json
 
-# get and upload all-machines.log
-bash <<LOGPERMS
-timeout 1m juju ssh -e $ENV 0 sudo chmod go+r /var/log/juju/all-machines.log
-LOGPERMS
-timeout 1m juju scp -e $ENV 0:/var/log/juju/all-machines.log $LOG_DEST
+if [[ $LOCAL ]] ; then
+  # get local all-machines.log
+  LOG_SRC=$TMP_JUJU_HOME/$ENV/log/all-machines.log
+  LOG_DEST=$(mktemp)
+  sudo chmod go+r $LOG_SRC
+  cp $LOG_SRC $LOG_DEST
+else
+  # get remote all-machines.log
+  bash <<LOGPERMS
+  timeout 1m juju ssh -e $ENV 0 sudo chmod go+r /var/log/juju/all-machines.log
+  LOGPERMS
+  timeout 1m juju scp -e $ENV 0:/var/log/juju/all-machines.log $LOG_DEST
+fi
+
+# upload all-machines.log to S3
 if [ -s $LOG_DEST ]; then
     tail $LOG_DEST
     s3cmd -c $TMP_JUJU_HOME/juju-qa.s3cfg put $LOG_DEST s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-all-machines-log
