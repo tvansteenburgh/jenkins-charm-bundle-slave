@@ -140,9 +140,9 @@ if [[ $LOCAL ]] ; then
   cp $LOG_SRC $LOG_DEST
 else
   # get remote all-machines.log
-  bash <<LOGPERMS
-  timeout 1m juju ssh -e $ENV 0 sudo chmod go+r /var/log/juju/all-machines.log
-  LOGPERMS
+bash <<LOGPERMS
+timeout 1m juju ssh -e $ENV 0 sudo chmod go+r /var/log/juju/all-machines.log
+LOGPERMS
   timeout 1m juju scp -e $ENV 0:/var/log/juju/all-machines.log $LOG_DEST
 fi
 
