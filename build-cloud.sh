@@ -62,18 +62,33 @@ cp $TMP_JUJU_HOME/staging-juju-rsa ${TMP}/ssh/id_rsa
 
 CHARMBOX=jujusolutions/charmbox:latest
 sudo docker pull $CHARMBOX
-sudo docker run --rm \
-    -u ubuntu \
-    -e "HOME=/home/ubuntu" \
-    -e "JUJU_HOME=/home/ubuntu/.juju" \
-    -w "/home/ubuntu" \
-    -v ${TMP_JUJU_HOME}:/home/ubuntu/.juju \
-    -v ${TMP}/.deployer-store-cache:/home/ubuntu/.juju/.deployer-store-cache \
-    -v ${JUJU_REPOSITORY}:/home/ubuntu/charm-repo \
-    -v ${TMP}:${TMP} \
-    -v ${TMP}/ssh:/home/ubuntu/.ssh \
-    -t $CHARMBOX \
-    sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
+if [[ $LOCAL ]] ; then
+  sudo docker run --rm --net=host \
+      -u ubuntu \
+      -e "HOME=/home/ubuntu" \
+      -e "JUJU_HOME=/home/ubuntu/.juju" \
+      -w "/home/ubuntu" \
+      -v ${TMP_JUJU_HOME}:/home/ubuntu/.juju \
+      -v ${TMP}/.deployer-store-cache:/home/ubuntu/.juju/.deployer-store-cache \
+      -v ${JUJU_REPOSITORY}:/home/ubuntu/charm-repo \
+      -v ${TMP}:${TMP} \
+      -v ${TMP}/ssh:/home/ubuntu/.ssh \
+      -t $CHARMBOX \
+      sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
+else
+  sudo docker run --rm \
+      -u ubuntu \
+      -e "HOME=/home/ubuntu" \
+      -e "JUJU_HOME=/home/ubuntu/.juju" \
+      -w "/home/ubuntu" \
+      -v ${TMP_JUJU_HOME}:/home/ubuntu/.juju \
+      -v ${TMP}/.deployer-store-cache:/home/ubuntu/.juju/.deployer-store-cache \
+      -v ${JUJU_REPOSITORY}:/home/ubuntu/charm-repo \
+      -v ${TMP}:${TMP} \
+      -v ${TMP}/ssh:/home/ubuntu/.ssh \
+      -t $CHARMBOX \
+      sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
+fi
 
 EXIT_STATUS=$?
 export STOP=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
