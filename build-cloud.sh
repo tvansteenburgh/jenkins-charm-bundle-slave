@@ -178,7 +178,7 @@ else
 fi
 if [ -n "${callback_url-}" ]; then
   curl "$callback_url" --data-urlencode "status=$status" \
-                       --data-urlencode "job_id=$JOB_ID" \
+                       --data-urlencode "job_id=$job_id" \
                        --data-urlencode "env=$ENV" \
                        --data-urlencode "build_number=$BUILD_NUMBER" \
                        --data-urlencode "build_url=$BUILD_URL" \
