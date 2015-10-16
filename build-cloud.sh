@@ -2,6 +2,14 @@
 
 set -x
 
+if [ -n "${callback_url-}" ]; then
+  curl "$callback_url" --data-urlencode "status=RUNNING" \
+                       --data-urlencode "job_id=$job_id" \
+                       --data-urlencode "env=$1" \
+                       --data-urlencode "build_number=$BUILD_NUMBER" \
+                       --data-urlencode "build_url=$BUILD_URL"
+fi
+
 export ENV=$1
 export REAL_JUJU_HOME=$HOME/cloud-city
 if [[ $ENV == "charm-testing-lxc" ]] ; then
@@ -173,6 +181,7 @@ if [ -n "${callback_url-}" ]; then
                        --data-urlencode "job_id=$JOB_ID" \
                        --data-urlencode "env=$ENV" \
                        --data-urlencode "build_number=$BUILD_NUMBER" \
+                       --data-urlencode "build_url=$BUILD_URL" \
                        --data-urlencode "result_url=${BUILD_URL}artifact/results.json"
 fi
 
