@@ -82,8 +82,7 @@ if [[ $LOCAL ]] ; then
       -v ${TMP}:${TMP} \
       -v ${TMP}/ssh:/home/ubuntu/.ssh \
       -t $CHARMBOX \
-      bzr whoami "Tim Van Steenburgh <tvansteenburgh@gmail.com>" && \
-      sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
+      sh -c "bzr whoami 'Tim Van Steenburgh <tvansteenburgh@gmail.com>' && sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS"
 else
   sudo docker run --rm \
       -u ubuntu \
@@ -96,8 +95,7 @@ else
       -v ${TMP}:${TMP} \
       -v ${TMP}/ssh:/home/ubuntu/.ssh \
       -t $CHARMBOX \
-      bzr whoami "Tim Van Steenburgh <tvansteenburgh@gmail.com>" && \
-      sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS
+      sh -c "bzr whoami 'Tim Van Steenburgh <tvansteenburgh@gmail.com>' && sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS"
 fi
 
 EXIT_STATUS=$?
