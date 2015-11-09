@@ -13,7 +13,10 @@ fi
 export ENV=$1
 export REAL_JUJU_HOME=$HOME/cloud-city
 if [ $ENV == "charm-testing-lxc" ] || [ $ENV == "charm-testing-power8-maas" ]; then
-  export LOCAL=true
+  export LOCAL_NET=true
+fi
+if [ $ENV == "charm-testing-lxc" ]; then
+  export LOCAL_LOG=true
 fi
 
 bash <<"EOT"
@@ -53,7 +56,7 @@ fi
 
 juju destroy-environment --yes --force $ENV || true
 
-if [[ $LOCAL ]] ; then
+if [[ $LOCAL_NET ]] ; then
   juju bootstrap --show-log -e $ENV --constraints "mem=2G" || true
 else
   $HOME/juju-ci-tools/clean_resources.py -v $ENV || true
@@ -70,7 +73,7 @@ cp $TMP_JUJU_HOME/staging-juju-rsa ${TMP}/ssh/id_rsa
 
 CHARMBOX=jujusolutions/charmbox:latest
 sudo docker pull $CHARMBOX
-if [[ $LOCAL ]] ; then
+if [[ $LOCAL_NET ]] ; then
   sudo docker run --rm --net=host \
       -u ubuntu \
       -e "HOME=/home/ubuntu" \
@@ -140,7 +143,7 @@ bundlefile=${artifacts[1]}
 # upload results.json
 s3cmd -c $TMP_JUJU_HOME/juju-qa.s3cfg put $OUTPUT s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-results.json
 
-if [[ $LOCAL ]] ; then
+if [[ $LOCAL_LOG ]] ; then
   # get local all-machines.log
   LOG_SRC=$TMP_JUJU_HOME/$ENV/log/all-machines.log
   LOG_DEST=$(mktemp)
