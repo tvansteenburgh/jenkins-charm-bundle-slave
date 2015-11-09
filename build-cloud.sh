@@ -12,7 +12,7 @@ fi
 
 export ENV=$1
 export REAL_JUJU_HOME=$HOME/cloud-city
-if [[ $ENV == "charm-testing-lxc" ]] ; then
+if [ $ENV == "charm-testing-lxc" ] || [ $ENV == "charm-testing-power8-maas" ]; then
   export LOCAL=true
 fi
 
