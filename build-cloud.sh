@@ -161,6 +161,8 @@ fi
 if [ -s $LOG_DEST ]; then
     tail $LOG_DEST
     s3cmd -c $TMP_JUJU_HOME/juju-qa.s3cfg put $LOG_DEST s3://juju-qa-data/charm-test/${JOB_NAME}-${BUILD_NUMBER}-all-machines-log
+    # save as jenkins build artifact
+    cp $LOG_DEST $HERE/all-machines.log
 fi
 
 if [ -n "${bundlefile}" ]; then
