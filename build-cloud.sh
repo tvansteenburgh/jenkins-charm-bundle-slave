@@ -18,8 +18,8 @@ if [ $ENV == "charm-testing-lxc" ]; then
   export DOCKER_NET='--net=host'
 fi
 if [ $ENV == "charm-testing-power8-maas" ]; then
-  export DOCKER_DNS='192.168.64.2'
-  export DOCKER_DNS_SEARCH='maas'
+  export DOCKER_DNS='--dns=192.168.64.2'
+  export DOCKER_DNS_SEARCH='--dns-search=maas'
 fi
 
 bash <<"EOT"
