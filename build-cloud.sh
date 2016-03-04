@@ -59,8 +59,13 @@ fi
 
 juju destroy-environment --yes --force $ENV || true
 
-if [ $ENV == "charm-testing-lxc" ] || [ $ENV == "charm-testing-power8-maas" ]; then
-  juju bootstrap --show-log -e $ENV --constraints "mem=2G" || true
+if [ $ENV == "charm-testing-lxc" ] ; then
+  if ! juju bootstrap --show-log -e $ENV --constraints "mem=2G" ; then
+    export JUJU_HOME=$REAL_JUJU_HOME
+    $HOME/.juju-plugins/juju-clean $ENV
+    export JUJU_HOME=$TMP_JUJU_HOME
+    juju bootstrap --show-log -e $ENV --constraints "mem=2G"
+  fi
 else
   $HOME/juju-ci-tools/clean_resources.py -v $ENV || true
   juju bootstrap --show-log -e $ENV --constraints "mem=4G" || true
