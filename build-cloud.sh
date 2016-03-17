@@ -17,9 +17,15 @@ if [ $ENV == "charm-testing-lxc" ]; then
   export LOCAL_LOG=true
   export DOCKER_NET='--net=host'
 fi
+
 if [ $ENV == "charm-testing-power8-maas" ]; then
   export DOCKER_DNS='--dns=8.8.8.8 --dns=192.168.64.2'
   export DOCKER_DNS_SEARCH='--dns-search=maas'
+  # use local ppc64el image
+  CHARMBOX=charmbox
+else
+  CHARMBOX=jujusolutions/charmbox:latest
+  sudo docker pull $CHARMBOX
 fi
 
 bash <<"EOT"
@@ -66,6 +72,8 @@ if [ $ENV == "charm-testing-lxc" ] ; then
     export JUJU_HOME=$TMP_JUJU_HOME
     juju bootstrap --show-log -e $ENV --constraints "mem=2G"
   fi
+elif [ $ENV == "charm-testing-power8-maas" ] ; then
+  juju bootstrap --show-log -e $ENV --constraints "mem=2G" || true
 else
   $HOME/juju-ci-tools/clean_resources.py -v $ENV || true
   juju bootstrap --show-log -e $ENV --constraints "mem=4G" || true
@@ -88,8 +96,6 @@ export START=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 mkdir -m 700 ${TMP}/ssh
 cp $TMP_JUJU_HOME/staging-juju-rsa ${TMP}/ssh/id_rsa
 
-CHARMBOX=jujusolutions/charmbox:latest
-sudo docker pull $CHARMBOX
 sudo docker run --rm $DOCKER_NET \
   $DOCKER_DNS \
   $DOCKER_DNS_SEARCH \
