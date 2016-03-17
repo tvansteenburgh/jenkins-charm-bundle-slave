@@ -22,9 +22,9 @@ if [ $ENV == "charm-testing-power8-maas" ]; then
   export DOCKER_DNS='--dns=8.8.8.8 --dns=192.168.64.2'
   export DOCKER_DNS_SEARCH='--dns-search=maas'
   # use local ppc64el image
-  CHARMBOX=charmbox
+  export CHARMBOX=charmbox
 else
-  CHARMBOX=jujusolutions/charmbox:latest
+  export CHARMBOX=jujusolutions/charmbox:latest
   sudo docker pull $CHARMBOX
 fi
 
