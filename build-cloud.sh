@@ -99,6 +99,7 @@ cp $TMP_JUJU_HOME/staging-juju-rsa ${TMP}/ssh/id_rsa
 sudo docker run --rm $DOCKER_NET \
   $DOCKER_DNS \
   $DOCKER_DNS_SEARCH \
+  --entrypoint bash \
   -u ubuntu \
   -e "HOME=/home/ubuntu" \
   -e "JUJU_HOME=/home/ubuntu/.juju" \
@@ -109,7 +110,7 @@ sudo docker run --rm $DOCKER_NET \
   -v ${TMP}:${TMP} \
   -v ${TMP}/ssh:/home/ubuntu/.ssh \
   -t $CHARMBOX \
-  sh -c "bzr whoami 'Tim Van Steenburgh <tvansteenburgh@gmail.com>' && sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS"
+  -c "bzr whoami 'Tim Van Steenburgh <tvansteenburgh@gmail.com>' && sudo bundletester -F -e $ENV -t $url -l DEBUG -v -r json -o $OUTPUT $BUNDLE_ARGS"
 
 EXIT_STATUS=$?
 export STOP=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
